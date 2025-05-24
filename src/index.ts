@@ -19,7 +19,7 @@ connectDB();
 //first-time user.
 app.post("/api/v1/signup", async (req, res): Promise<void> => {
 
-  const { username, password } = req.body;
+  const { username, name, password } = req.body;
 
   try {
     if(!username || !password) {
@@ -37,6 +37,7 @@ app.post("/api/v1/signup", async (req, res): Promise<void> => {
 
     const user = await userModel.create({
       username,
+      name,
       password,
     })
 
@@ -156,7 +157,6 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     const _id = req.body._id;
     // @ts-ignore
     const user_id = req.user._id;
-    console.log(user_id);
     const data = await contentModel.deleteOne({_id: _id, user: user_id});
     res.status(200).json({
       message: "Data removed successfully"
@@ -238,6 +238,27 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
       message: "Error encountered",
       error: `${error}`,
     })
+  }
+})
+
+app.get("/api/v1/user", async (req, res) => {
+  const userId = req.query.userId;
+  try{
+    const user = await userModel.findById(userId);
+    if(!user) {
+      res.status(400).json({message: "User not found"})
+      return;
+    }
+    res.status(200).json({
+      message: "User fetched successfully",
+      user: user.username
+    })
+  }
+  catch(error) {
+    res.status(300).json({
+      message: "Error fetching user data, try after few moments"
+    })
+    
   }
 })
 

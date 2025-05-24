@@ -5,6 +5,7 @@ import validator from "validator";
 
 interface IUser extends Document {
   username: string,
+  name: string,
   password: string,
 }
 
@@ -17,6 +18,10 @@ const userSchema = new Schema<IUser>(
       trim: true,
       minlength: [4, "Username must be atleast 4 characters long"],
       maxlength: [30, "Username can't be longer than 30 characters"],
+    },
+    name: {
+      type: String,
+      trim: true,
     },
     password: {
       type: String,
